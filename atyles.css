@@ -1,0 +1,151 @@
+/* Reset */
+* {
+  margin: 0; padding: 0; box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background: #000;
+  color: #ff2d8f;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+}
+
+h1, h2, h3 {
+  color: #ff2d8f;
+  margin-bottom: 1rem;
+}
+
+.container {
+  width: 90%;
+  max-width: 1000px;
+  margin: 2rem auto;
+  background: #111;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 0 10px #ff2d8faa;
+}
+
+input, select, button, textarea {
+  font-size: 1rem;
+  margin: 0.3rem 0;
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: none;
+  outline: none;
+  font-weight: 600;
+  background: #222;
+  color: #ff2d8f;
+  box-shadow: 0 0 8px #ff2d8f99;
+  transition: 0.3s;
+}
+
+input:focus, select:focus, textarea:focus {
+  box-shadow: 0 0 12px #ff2d8fff;
+}
+
+button {
+  cursor: pointer;
+  background: #ff2d8f;
+  color: #000;
+  font-weight: 700;
+  border-radius: 12px;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background: #ff1a6b;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  box-shadow: 0 0 8px #ff2d8f88;
+}
+
+th, td {
+  border: 1px solid #ff2d8f44;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+thead {
+  background: #ff2d8f22;
+  color: #ff2d8f;
+}
+
+.ticket-header, .ticket-info, .ticket-footer, .ticket-total {
+  margin-bottom: 1rem;
+}
+
+.ticket-header img.logo {
+  width: 100px;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.ticket-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.ticket-table th, .ticket-table td {
+  border: 1px solid #ff2d8f99;
+  padding: 0.4rem;
+}
+
+.ticket-footer {
+  font-style: italic;
+  color: #ff2d8faa;
+  font-weight: 600;
+}
+
+nav {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+nav button {
+  background: #ff2d8f;
+  border-radius: 12px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  color: #000;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+nav button:hover {
+  background: #ff1a6b;
+}
+
+.msg {
+  margin-top: 0.5rem;
+  font-weight: 600;
+  color: #ff6fa1;
+}
+
+#ticketSection {
+  display: none;
+  margin-top: 1rem;
+  background: #111;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 0 10px #ff2d8faa;
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: 95%;
+    padding: 1rem;
+  }
+  table, .ticket-table {
+    font-size: 0.8rem;
+  }
+}

@@ -1,0 +1,309 @@
+/* Fuentes y reset */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #121212;
+  color: #ff2d8f; /* Fucsia */
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+/* Login */
+.login-container {
+  background: #1e1e1e;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px #ff2d8f;
+  width: 350px;
+  text-align: center;
+}
+
+.login-container .title {
+  margin-bottom: 20px;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #ff2d8f;
+}
+
+.login-container label {
+  display: block;
+  margin: 10px 0 5px;
+  text-align: left;
+  font-weight: 600;
+}
+
+.login-container input,
+.login-container select {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #ff2d8f;
+  border-radius: 5px;
+  background: #121212;
+  color: #ff2d8f;
+  font-size: 1rem;
+}
+
+.login-container input::placeholder {
+  color: #ff8ac1;
+}
+
+.btn {
+  margin-top: 20px;
+  width: 100%;
+  padding: 12px;
+  background: #ff2d8f;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  color: #121212;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn:hover {
+  background: #ff58b0;
+}
+
+.error-msg {
+  margin-top: 10px;
+  color: #ff385c;
+  font-weight: 600;
+}
+
+/* Admin panel */
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background: #1e1e1e;
+  border-bottom: 2px solid #ff2d8f;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #ff2d8f;
+  letter-spacing: 2px;
+}
+
+.btn-logout {
+  background: #ff385c;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 8px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn-logout:hover {
+  background: #ff2d8f;
+}
+
+.admin-menu {
+  display: flex;
+  gap: 10px;
+  padding: 10px 30px;
+  background: #1e1e1e;
+  border-bottom: 2px solid #ff2d8f;
+  flex-wrap: wrap;
+}
+
+.btn-menu {
+  background: #ff2d8f;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 700;
+  color: #121212;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  flex-grow: 1;
+  min-width: 120px;
+  text-align: center;
+}
+
+.btn-menu:hover {
+  background: #ff58b0;
+}
+
+.admin-main {
+  background: #121212;
+  padding: 20px 30px;
+  border-radius: 12px;
+  box-shadow: 0 0 30px #ff2d8f;
+  max-width: 1000px;
+  margin: 20px auto;
+  color: #ff2d8f;
+  min-height: 400px;
+  overflow-y: auto;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  color: #ff2d8f;
+}
+
+thead {
+  background: #ff2d8f;
+  color: #121212;
+}
+
+thead th {
+  padding: 10px;
+  border: 1px solid #ff2d8f;
+}
+
+tbody td {
+  padding: 8px;
+  border: 1px solid #ff2d8f;
+  text-align: center;
+}
+
+.btn-small {
+  background: #ff385c;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  color: white;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+.btn-small:hover {
+  background: #ff2d8f;
+}
+
+/* Form inputs in admin */
+.admin-main label {
+  display: block;
+  margin-top: 15px;
+  font-weight: 600;
+}
+
+.admin-main input,
+.admin-main select {
+  width: 100%;
+  padding: 8px 10px;
+  background: #1e1e1e;
+  border: 2px solid #ff2d8f;
+  border-radius: 8px;
+  color: #ff2d8f;
+  font-size: 1rem;
+  margin-top: 5px;
+}
+
+/* Venta section for employees */
+
+.venta-section {
+  max-width: 900px;
+  margin: 20px auto;
+  background: #1e1e1e;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 0 25px #ff2d8f;
+}
+
+.venta-section h2 {
+  margin-bottom: 20px;
+}
+
+#productosTable {
+  margin-bottom: 10px;
+}
+
+#productosTable input {
+  width: 90%;
+  padding: 6px 8px;
+  background: #121212;
+  border: 1px solid #ff2d8f;
+  color: #ff2d8f;
+  border-radius: 6px;
+  font-size: 1rem;
+  text-align: center;
+}
+
+#productosTable th,
+#productosTable td {
+  padding: 8px;
+}
+
+#productosTable td {
+  vertical-align: middle;
+}
+
+.btn-venta {
+  margin-top: 15px;
+  width: 100%;
+  padding: 14px;
+  background: #ff2d8f;
+  font-weight: 700;
+  font-size: 1.3rem;
+  border-radius: 10px;
+  color: #121212;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn-venta:hover {
+  background: #ff58b0;
+}
+
+.totalVenta {
+  text-align: right;
+  margin-top: 10px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #ff2d8f;
+}
+
+.ticket-section {
+  max-width: 900px;
+  margin: 30px auto;
+  background: #1e1e1e;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 0 20px #ff2d8f;
+  white-space: pre-wrap;
+  font-family: monospace;
+  color: #ff2d8f;
+  font-size: 1rem;
+  line-height: 1.3;
+}
+
+.ticket-content {
+  background: #121212;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: inset 0 0 10px #ff2d8f;
+}
+
+/* Scroll vertical for admin main */
+.admin-main::-webkit-scrollbar {
+  width: 10px;
+}
+
+.admin-main::-webkit-scrollbar-thumb {
+  background: #ff2d8f;
+  border-radius: 10px;
+}
