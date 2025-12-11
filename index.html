@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Control Ventas Multisucursal</title>
+<style>
+  /* Reset */
+  * {
+    margin: 0; padding: 0; box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  body {
+    background: #000;
+    color: #ff2d8f;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-weight: 600;
+  }
+  h1, h2, h3 {
+    color: #ff2d8f;
+    margin-bottom: 1rem;
+  }
+  .container {
+    width: 90%;
+    max-width: 1000px;
+    margin: 2rem auto;
+    background: #111;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    box-shadow: 0 0 10px #ff2d8faa;
+  }
+  input, select, button, textarea {
+    font-size: 1rem;
+    margin: 0.3rem 0;
+    padding: 0.5rem;
+    border-radius: 6px;
+    border: none;
+    outline: none;
+    font-weight: 600;
+    background: #222;
+    color: #ff2d8f;
+    box-shadow: 0 0 8px #ff2d8f99;
+    transition: 0.3s;
+  }
+  input:focus, select:focus, textarea:focus {
+    box-shadow: 0 0 12px #ff2d8fff;
+  }
+  button {
+    cursor: pointer;
+    background: #ff2d8f;
+    color: #000;
+    font-weight: 700;
+    border-radius: 12px;
+    transition: background 0.3s;
+  }
+  button:hover {
+    background: #ff1a6b;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    box-shadow: 0 0 8px #ff2d8f88;
+  }
+  th, td {
+    border: 1px solid #ff2d8f44;
+    padding: 0.5rem;
+    text-align: left;
+  }
+  thead {
+    background: #ff2d8f22;
+    color: #ff2d8f;
+  }
+  nav {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  nav button {
+    background: #ff2d8f;
+    border-radius: 12px;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    color: #000;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  nav button:hover {
+    background: #ff1a6b;
+  }
+  #loginSection, #adminSection, #employeeSection {
+    display: none;
+  }
+  #loginSection.active, #adminSection.active, #employeeSection.active {
+    display: block;
+  }
+  .msg {
+    margin-top: 0.5rem;
+    font-weight: 600;
+    color: #ff6fa1;
+  }
+  .hidden {
+    display: none !important;
+  }
+  textarea {
+    resize: vertical;
+  }
+  /* Ticket */
+  #ticketSection {
+    display: none;
+    margin-top: 1rem;
+    background: #111;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 0 10px #ff2d8faa;
+    max-width: 600px;
+    overflow-x: auto;
+  }
+  .ticket-header img.logo {
+    width: 120px;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  .ticket-header, .ticket-info, .ticket-footer, .ticket-total {
+    margin-bottom: 1rem;
+  }
+  .ticket-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+  }
+  .ticket-table th, .ticket-table td {
+    border: 1px solid #ff2d8f99;
+    padding: 0.4rem;
+  }
+  .ticket-footer {
+    font-style: italic;
+    color: #ff2d8faa;
+    font-weight: 600;
+  }
+  /* Responsive */
+  @media (max-width: 768px) {
+    .container {
+      width: 95%;
+      padding: 1rem;
+    }
+    table, .ticket-table {
+      font-size: 0.8rem;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- LOGIN -->
+    <section id="loginSection" class="active" aria-label="Sección de inicio de sesión">
+      <h1>Control de Ventas - Login</h1>
+      <form id="loginForm" aria-describedby="loginMsg" aria-label="Formulario de inicio de sesión">
+        <label for="usuario">Usuario:</label><br />
+        <input type="text" id="usuario" name="usuario" required autocomplete="username" aria-required="true" />
+        <br />
+        <label for="password">Contraseña:</label><br />
+        <input type="password" id="password" name="password" required autocomplete="current-password" aria-required="true" />
+        <br />
+        <label for="rol">Rol:</label><br />
+        <select id="rol" name="rol" required aria-required="true">
+          <option value="" disabled selected>Selecciona rol</option>
+          <option value="administrador">Administrador</option>
+          <option value="empleado">Empleado</option>
+        </select>
+        <br />
+        <button type="submit">Ingresar</button>
+        <p id="loginMsg" class="msg" role="alert" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <!-- ADMIN -->
+    <section id="adminSection" aria-label="Panel de administrador">
+      <h1>Panel Administrador</h1>
+      <nav aria-label="Navegación del panel administrador">
+        <button id="btnSucursales">Sucursales</button>
+        <button id="btnEmpleados">Empleados</button>
+        <button id="btnInventario">Inventario</button>
+        <button id="btnVentas">Reportes Ventas</button>
+        <button id="btnMermas">Mermas</button>
+        <button id="btnLogoutAdmin" style="margin-left:auto; background:#800040;">Cerrar Sesión</button>
+      </nav>
+
+      <div id="adminContent">
+        <!-- Sucursales -->
+        <div id="sucursalesSection" class="adminSubSection">
+          <h2>Agregar Sucursal</h2>
+          <form id="formAddSucursal" aria-label="Formulario para agregar sucursal">
+            <input type="text" id="nombreSucursal" placeholder="Nombre sucursal" required />
+            <button type="submit">Agregar</button>
+          </form>
+          <h3>Listado de Sucursales</h3>
+          <ul id="listaSucursales" aria-live="polite"></ul>
+        </div>
+
+        <!-- Empleados -->
+        <div id="empleadosSection" class="adminSubSection hidden">
+          <h2>Agregar Empleado</h2>
+          <form id="formAddEmpleado" aria-label="Formulario para agregar empleado">
+            <input type="text" id="empNombre" placeholder="Nombre completo" required />
+            <input type="text" id="empUsuario" placeholder="Usuario" required />
+            <input type="password" id="empPassword" placeholder="Contraseña" required />
+            <select id="empRol" required>
+              <option value="" disabled selected>Rol</option>
+              <option value="administrador">Administrador</option>
+              <option value="empleado">Empleado</option>
+            </select>
+            <select id="empSucursal" required>
+              <option value="" disabled selected>Sucursal</option>
+            </select>
+            <button type="submit">Agregar</button>
+          </form>
+          <h3>Listado de Empleados</h3>
+          <table>
+            <thead><tr><th>Nombre</th><th>Usuario</th><th>Rol</th><th>Sucursal</th></tr></thead>
+            <tbody id="tablaEmpleados"></tbody>
+          </table>
+        </div>
+
+        <!-- Inventario -->
+        <div id="inventarioSection" class="adminSubSection hidden">
+          <h2>Agregar Producto al Inventario</h2>
+          <form id="formAddProducto" aria-label="Formulario para agregar producto al inventario">
+            <select id="invSucursal" required>
+              <option value="" disabled selected>Sucursal</option>
+            </select>
+            <input type="text" id="invProducto" placeholder="Producto" required />
+            <select id="invUnidad" required>
+              <option value="" disabled selected>Unidad de medida</option>
+              <option value="pieza">Pieza</option>
+              <option value="kilo">Kilo</option>
+              <option value="litro">Litro</option>
+            </select>
+            <input type="number" id="invCantidad" placeholder="Cantidad" min="0" step="any" required />
+            <input type="number" id="invPrecioCompra" placeholder="Precio compra" min="0" step="any" required />
+            <input type="number" id="invPrecioVenta" placeholder="Precio venta" min="0" step="any" required />
+            <input type="number" id="invStockMin" placeholder="Stock mínimo (opcional)" min="0" step="any" />
+            <button type="submit">Agregar / Actualizar</button>
+          </form>
+
+          <h3>Inventario Completo</h3>
+          <table>
+            <thead><tr><th>Sucursal</th><th>Producto</th><th>Unidad</th><th>Cantidad</th><th>Precio Compra</th><th>Precio Venta</th><th>Stock Mín</th></tr></thead>
+            <tbody id="tablaInventario"></tbody>
+          </table>
+        </div>
+
+        <!-- Reportes Ventas -->
+        <div id="ventasSection" class="adminSubSection hidden">
+          <h2>Reporte de Ventas Diarias</h2>
+          <select id="ventasSucursalFiltro" aria-label="Filtro de sucursal para reporte de ventas">
+            <option value="" selected>-- Todas las sucursales --</option>
+          </select>
+          <button id="btnActualizarReporte">Actualizar Reporte</button>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead><tr><th>Sucursal</th><th>Empleado</th><th>Fecha</th><th>Cliente</th><th>Domicilio</th><th>Total (MXN)</th></tr></thead>
+              <tbody id="tablaVentas"></tbody>
+            </table>
+          </div>
+          <canvas id="graficaVentas" height="150" style="margin-top:1rem;"></canvas>
+        </div>
+
+        <!-- Mermas -->
+        <div id="mermasSection" class="adminSubSection hidden">
+          <h2>Registrar Merma</h2>
+          <form id="formAddMerma" aria-label="Formulario para registrar merma">
+            <select id="mermaSucursal" required>
+              <option value="" disabled selected>Sucursal</option>
+            </select>
+            <input type="text" id="mermaProducto" placeholder="Producto" required />
+            <input type="number" id="mermaCantidad" placeholder="Cantidad" min="0" step="any" required />
+            <input type="text" id="mermaMotivo" placeholder="Motivo" required />
+            <button type="submit">Registrar Merma</button>
+          </form>
+          <h3>Listado de Mermas</h3>
+          <table>
+            <thead><tr><th>Sucursal</th><th>Producto</th><th>Cantidad</th><th>Motivo</th><th>Fecha</th></tr></thead>
+            <tbody id="tablaMermas"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- EMPLEADO -->
+    <section id="employeeSection" aria-label="Panel de empleado para ventas">
+      <h1>Panel Empleado - Venta</h1>
+      <button id="btnLogoutEmp" style="background:#800040; margin-bottom:1rem;">Cerrar Sesión</button>
+      <form id="ventaForm" aria-label="Formulario para registrar venta">
+        <label for="sucursalVenta">Sucursal:</label><br />
+        <select id="sucursalVenta" required>
+          <option value="" disabled selected>Selecciona sucursal</option>
+        </select><br />
+
+        <h3>Productos disponibles</h3>
+        <table>
+          <thead><tr><th>Producto</th><th>Unidad</th><th>Precio Venta</th><th>Cantidad a vender</th></tr></thead>
+          <tbody id="productosDisponiblesBody"></tbody>
+        </table>
+
+        <h3>Productos en venta</h3>
+        <table>
+          <thead><tr><th>Producto</th><th>Cantidad</th><th>Precio Unitario</th><th>Total</th><th>Quitar</th></tr></thead>
+          <tbody id="productosVentaBody"></tbody>
+        </table>
+        <p><strong>Total venta: </strong><span id="totalVenta">$0.00</span></p>
+
+        <label for="nombreCliente">Nombre cliente (opcional):</label><br />
+        <input type="text" id="nombreCliente" placeholder="Nombre cliente" /><br />
+        <label for="domicilioCliente">Domicilio cliente (opcional):</label><br />
+        <textarea id="domicilioCliente" placeholder="Domicilio cliente"></textarea><br />
+
+        <button type="submit">Registrar Venta y Generar Ticket</button>
+      </form>
+
+      <div id="ticketSection" aria-label="Sección ticket de venta">
+        <h2>Ticket de Venta</h2>
+        <div id="ticketContent"></div>
+        <button id="btnCerrarTicket" style="margin-top:1rem;">Cerrar Ticket</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- Librería Chart.js CDN para gráficas -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  // Cambia esta URL por tu deployment de Apps Script (URL pública del Web App)
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwTq3buit6tWRG2kV9wyM2paXIltsPUonwqHgdKIi-p9AHSaLJim8QpEtvYj5rlgRw_/exec';
+
+  // Variables globales para usuario y rol actual
+  let currentUser = null;
+  let currentRole = null;
+
+  // --- Referencias DOM ---
+  const loginSection = document.getElementById('loginSection');
+  const adminSection = document.getElementById('adminSection');
+  const employeeSection = document.getElementById('employeeSection');
+
+  const loginForm = document.getElementById('loginForm');
+  const loginMsg = document.getElementById('loginMsg');
+
+  // --- LOGIN ---
+  loginForm.onsubmit = async e => {
+    e.preventDefault();
+    loginMsg.textContent = 'Validando...';
+
+    const usuario = loginForm.usuario.value.trim();
+    const password = loginForm.password.value.trim();
+    const rol = loginForm.rol.value;
+
+    if(!usuario || !password || !rol) {
+      loginMsg.textContent = 'Completa todos los campos';
+      return;
+    }
+
+    try {
+      const res = await fetch(SCRIPT_URL + '?action=login', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({usuario, password})
+      });
+      const data = await res.json();
+
+      if(data.success && data.user) {
+        if(data.user.rol !== rol) {
+          loginMsg.textContent = 'Rol incorrecto para este usuario';
+          return;
+        }
+        currentUser = data.user;
+        currentRole = rol;
+        loginMsg.textContent = '';
+        loginSection.classList.remove('active');
+        if(rol === 'administrador') {
+          adminSection.classList.add('active');
+          await cargarAdmin();
+        } else {
+          employeeSection.classList.add('active');
+          await cargarEmpleado();
+        }
+      } else {
+        loginMsg.textContent = 'Usuario o contraseña incorrectos';
+      }
+    } catch(err) {
+      loginMsg.textContent = 'Error en conexión';
+      console.error(err);
+    }
+  };
+
+  // --- LOGOUT ---
+  document.getElementById('btnLogoutAdmin').onclick = () => logout();
+  document.getElementById('btnLogoutEmp').onclick = () => logout();
+  function logout() {
+    currentUser = null;
+    currentRole = null;
+    adminSection.classList.remove('active');
+    employeeSection.classList.remove('active');
+    loginSection.classList.add('active');
+    loginForm.reset();
+  }
+
+  // --- ADMIN PANEL NAVEGACIÓN ---
+  const btnSucursales = document.getElementById('btnSucursales');
+  const btnEmpleados = document.getElementById('btnEmpleados');
+  const btnInventario = document.getElementById('btnInventario');
+  const btnVentas = document.getElementById('btnVentas');
+  const btnMermas = document.getElementById('btnMermas');
+
+  const sucursalesSection = document.getElementById('sucursalesSection');
+  const empleadosSection = document.getElementById('empleadosSection');
+  const inventarioSection = document.getElementById('inventarioSection');
+  const ventasSection = document.getElementById('ventasSection');
+  const mermasSection = document.getElementById('mermasSection');
+
+  const adminSubSections = [sucursalesSection, empleadosSection, inventarioSection, ventasSection, mermasSection];
+
+  function showAdminSection(section) {
+    adminSubSections.forEach(s => s.classList.add('hidden'));
+    section.classList.remove('hidden');
+  }
+
+  btnSucursales.onclick = () => showAdminSection(sucursalesSection);
+  btnEmpleados.onclick = () => showAdminSection(empleadosSection);
+  btnInventario.onclick = () => showAdminSection(inventarioSection);
+  btnVentas.onclick = () => {
+    showAdminSection(ventasSection);
+    cargarReporteVentas();
+  };
+  btnMermas.onclick = () => showAdminSection(mermasSection);
+
+  // --- Cargar datos para admin ---
+  async function cargarAdmin() {
+    // Cargar sucursales, empleados e inventario para los selects y tablas
+    await cargarSucursales();
+    await cargarEmpleados();
+    await cargarInventario();
+    await cargarMermas();
+  }
+
+  // --- FUNCIONES DE CARGA ---
+
+  async function cargarSucursales() {
+    try {
+      const res = await fetch(SCRIPT_URL + '?action=getSucursales');
+      const data = await res.json();
+      const lista = document.getElementById('listaSucursales');
+      const empSucursalSelect = document.getElementById('empSucursal');
+      const invSucursalSelect = document.getElementById('invSucursal');
+      const mermaSucursalSelect = document.getElementById('mermaSucursal');
+      const ventasSucursalFiltro = document.getElementById('ventasSucursalFiltro');
+      const sucursalVenta = document.getElementById('sucursalVenta');
+
+      if(data.success) {
+        // Mostrar lista sucursales
+        lista.innerHTML = '';
+        empSucursalSelect.innerHTML = '<option value="" disabled selected>Sucursal</option>';
+        invSucursalSelect.innerHTML = '<option value="" disabled selected>Sucursal</option>';
+        mermaSucursalSelect.innerHTML = '<option value="" disabled selected>Sucursal</option>';
+        ventasSucursalFiltro.innerHTML = '<option value="" selected>-- Todas las sucursales --</option>';
+        sucursalVenta.innerHTML = '<option value="" disabled selected>Selecciona sucursal</option>';
+
+        data.sucursales.forEach(suc => {
+          // Lista sucursales
+          const li = document.createElement('li');
+          li.textContent = suc.nombre;
+          lista.appendChild(li);
+
+          // Selects
+          const opt1 = document.createElement('option');
+          opt1.value = suc.nombre;
+          opt1.textContent = suc.nombre;
+          empSucursalSelect.appendChild(opt1);
+
+          const opt2 = opt1.cloneNode(true);
+          invSucursalSelect.appendChild(opt2);
+
+          const opt3 = opt1.cloneNode(true);
+          mermaSucursalSelect.appendChild(opt3);
+
+          const opt4 = opt1.cloneNode(true);
+          ventasSucursalFiltro.appendChild(opt4);
+
+          const opt5 = opt1.cloneNode(true);
+          sucursalVenta.appendChild(opt5);
+        });
+      } else {
+        lista.innerHTML = '<li>No hay sucursales registradas</li>';
+      }
+    } catch(err) {
+      console.error('Error cargarSucursales:', err);
+    }
+  }
+
+  async function cargarEmpleados() {
+    try {
+      const res = await fetch(SCRIPT_URL + '?action=getEmpleados');
+      const data = await res.json();
+      const tbody = document.getElementById('tablaEmpleados');
+      if(data.success) {
+        tbody.innerHTML = '';
+        data.empleados.forEach(emp => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${emp.nombre}</td>
+            <td>${emp.usuario}</td>
+            <td>${emp.rol}</td>
+            <td>${emp.sucursal}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } else {
+        tbody.innerHTML = '<tr><td colspan="4">No hay empleados</td></tr>';
+      }
+    } catch(err) {
+      console.error('Error cargarEmpleados:', err);
+    }
+  }
+
+  async function cargarInventario() {
+    try {
+      const res = await fetch(SCRIPT_URL + '?action=getInventario');
+      const data = await res.json();
+      const tbody = document.getElementById('tablaInventario');
+      if(data.success) {
+        tbody.innerHTML = '';
+        data.inventario.forEach(item => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${item.sucursal}</td>
+            <td>${item.producto}</td>
+            <td>${item.unidad}</td>
+            <td>${item.cantidad}</td>
+            <td>$${parseFloat(item.precioCompra).toFixed(2)}</td>
+            <td>$${parseFloat(item.precioVenta).toFixed(2)}</td>
+            <td>${item.stockMin || ''}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } else {
+        tbody.innerHTML = '<tr><td colspan="7">No hay inventario</td></tr>';
+      }
+    } catch(err) {
+      console.error('Error cargarInventario:', err);
+    }
+  }
+
+  async function cargarMermas() {
+    try {
+      const res = await fetch(SCRIPT_URL + '?action=getMermas');
+      const data = await res.json();
+      const tbody = document.getElementById('tablaMermas');
+      if(data.success) {
+        tbody.innerHTML = '';
+        data.mermas.forEach(m => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${m.sucursal}</td>
+            <td>${m.producto}</td>
+            <td>${m.cantidad}</td>
+            <td>${m.motivo}</td>
+            <td>${new Date(m.fecha).toLocaleDateString()}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } else {
+        tbody.innerHTML = '<tr><td colspan="5">No hay mermas registradas</td></tr>';
+      }
+    } catch(err) {
+      console.error('Error cargarMermas:', err);
+    }
+  }
+
+  // --- FORMULARIOS AGREGAR ---
+
+  // Agregar sucursal
+  document.getElementById('formAddSucursal').onsubmit = async e => {
+    e.preventDefault();
+    const nombre = document.getElementById('nombreSucursal').value.trim();
+    if(!nombre) return alert('Ingresa nombre de sucursal');
+    try {
+      const res = await fetch(SCRIPT_URL + '?action=addSucursal', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({nombre})
+      });
+      const data = await res.json();
+      if(data.success) {
+        alert('Sucursal agregada');
+        document.getElementById('nombreSucursal').value = '';
+        await cargarSucursales();
+      } else {
+        alert('Error al agregar sucursal');
+      }
+    } catch(err) {
+      alert('Error en conexión');
+      console.error(err);
+    }
+  };
+
+  // Agregar empleado
+  document.getElementById('formAddEmpleado').onsubmit = async e => {
+    e.preventDefault();
+    const nombre = document.getElementById('empNombre').value.trim();
+    const usuario = document.getElementById('empUsuario').value.trim();
+    const password = document.getElementById('empPassword').value.trim();
+    const rol = document.getElementById('empRol').value;
+    const sucursal = document.getElementById('empSucursal').value;
+    if(!nombre || !usuario || !password || !rol || !sucursal) return alert('Completa todos los campos');
+    try {
+      const res = await fetch(SCRIPT_URL + '?action=addEmpleado', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({nombre, usuario, password, rol, sucursal})
+      });
+      const data = await res.json();
+      if(data.success) {
+        alert('Empleado agregado');
+        document.getElementById('formAddEmpleado').reset();
+        await cargarEmpleados();
+      } else {
+        alert('Error al agregar empleado');
+      }
+    } catch(err) {
+      alert('Error en conexión');
+      console.error(err);
+    }
+  };
+
+  // Agregar/actualizar producto inventario
+  document.getElementById('formAddProducto').onsubmit = async e => {
+    e.preventDefault();
+    const sucursal = document.getElementById('invSucursal').value;
+    const producto = document.getElementById('invProducto').value.trim();
+    const unidad = document.getElementById('invUnidad').value;
+    const cantidad = parseFloat(document.getElementById('invCantidad').value);
+    const precioCompra = parseFloat(document.getElementById('invPrecioCompra').value);
+    const precioVenta = parseFloat(document.getElementById('invPrecioVenta').value);
+    const stockMin = parseFloat(document.getElementById('invStockMin').value) || 0;
+    if(!sucursal || !producto || !unidad || isNaN(cantidad) || isNaN(precioCompra) || isNaN(precioVenta)) {
+      return alert('Completa todos los campos correctamente');
+    }
+    try {
+      const res = await fetch(SCRIPT_URL + '?action=addInventario', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({sucursal, producto, unidad, cantidad, precioCompra, precioVenta, stockMin})
+      });
+      const data = await res.json();
+      if(data.success) {
+        alert('Producto agregado/actualizado');
+        document.getElementById('formAddProducto').reset();
+        await cargarInventario();
+      } else {
+        alert('Error al agregar producto');
+      }
+    } catch(err) {
+      alert('Error en conexión');
+      console.error(err);
+    }
+  };
+
+  // Agregar merma
+  document.getElementById('formAddMerma').onsubmit = async e => {
+    e.preventDefault();
+    const sucursal = document.getElementById('mermaSucursal').value;
+    const producto = document.getElementById('mermaProducto').value.trim();
+    const cantidad = parseFloat(document.getElementById('mermaCantidad').value);
+    const motivo = document.getElementById('mermaMotivo').value.trim();
+    if(!sucursal || !producto || isNaN(cantidad) || !motivo) return alert('Completa todos los campos');
+    try {
+      const res = await fetch(SCRIPT_URL + '?action=addMerma', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({sucursal, producto, cantidad, motivo})
+      });
+      const data = await res.json();
+      if(data.success) {
+        alert('Merma registrada');
+        document.getElementById('formAddMerma').reset();
+        await cargarMermas();
+      } else {
+        alert('Error al registrar merma');
+      }
+    } catch(err) {
+      alert('Error en conexión');
+      console.error(err);
+    }
+  };
+
+  // --- REPORTE VENTAS ---
+  const btnActualizarReporte = document.getElementById('btnActualizarReporte');
+  btnActualizarReporte.onclick = cargarReporteVentas;
+
+  async function cargarReporteVentas() {
+    const filtroSucursal = document.getElementById('ventasSucursalFiltro').value || '';
+    try {
+      const res = await fetch(SCRIPT_URL + '?action=getVentas' + (filtroSucursal ? '&sucursal=' + encodeURIComponent(filtroSucursal) : ''));
+      const data = await res.json();
+      const tbody = document.getElementById('tablaVentas');
+      if(data.success) {
+        tbody.innerHTML = '';
+        data.ventas.forEach(v => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${v.sucursal}</td>
+            <td>${v.empleado}</td>
+            <td>${new Date(v.fecha).toLocaleDateString()}</td>
+            <td>${v.cliente || ''}</td>
+            <td>${v.domicilio || ''}</td>
+            <td>$${parseFloat(v.total).toFixed(2)}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+        // Mostrar gráfica
+        mostrarGraficaVentas(data.ventas);
+      } else {
+        tbody.innerHTML = '<tr><td colspan="6">No hay ventas registradas</td></tr>';
+      }
+    } catch(err) {
+      console.error('Error cargarReporteVentas:', err);
+    }
+  }
+
+  let chartVentas = null;
+  function mostrarGraficaVentas(ventas) {
+    const ctx = document.getElementById('graficaVentas').getContext('2d');
+    // Agrupar total por fecha
+    const ventasPorFecha = {};
+    ventas.forEach(v => {
+      const fecha = new Date(v.fecha).toLocaleDateString();
+      ventasPorFecha[fecha] = (ventasPorFecha[fecha] || 0) + parseFloat(v.total);
+    });
+    const labels = Object.keys(ventasPorFecha).sort((a,b) => new Date(a) - new Date(b));
+    const data = labels.map(l => ventasPorFecha[l]);
+
+    if(chartVentas) chartVentas.destroy();
+    chartVentas = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Ventas totales (MXN)',
+          data,
+          backgroundColor: '#ff2d8f88',
+          borderColor: '#ff2d8f',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+  }
+
+  // --- EMPLEADO ---
+
+  async function cargarEmpleado() {
+    // Cargar sucursales y productos disponibles
+    await cargarSucursales();
+    await cargarProductosPorSucursal();
+  }
+
+  document.getElementById('sucursalVenta').onchange = async () => {
+    await cargarProductosPorSucursal();
+  };
+
+  // Cargar productos para la sucursal seleccionada
+  async function cargarProductosPorSucursal() {
+    const sucursal = document.getElementById('sucursalVenta').value;
+    const tbodyDisponibles = document.getElementById('productosDisponiblesBody');
+    tbodyDisponibles.innerHTML = '';
+    if(!sucursal) return;
+    try {
+      const res = await fetch(SCRIPT_URL + '?action=getInventario&sucursal=' + encodeURIComponent(sucursal));
+      const data = await res.json();
+      if(data.success) {
+        data.inventario.forEach(item => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${item.producto}</td>
+            <td>${item.unidad}</td>
+            <td>$${parseFloat(item.precioVenta).toFixed(2)}</td>
+            <td><input type="number" min="0" step="any" value="0" data-producto="${item.producto}" data-precio="${item.precioVenta}" /></td>
+          `;
+          tbodyDisponibles.appendChild(tr);
+        });
+      } else {
+        tbodyDisponibles.innerHTML = '<tr><td colspan="4">No hay productos disponibles</td></tr>';
+      }
+    } catch(err) {
+      console.error('Error cargarProductosPorSucursal:', err);
+    }
+  }
+
+  // Manejar productos agregados a venta
+  const productosVenta = {}; // { producto: {cantidad, precioUnitario} }
+
+  document.getElementById('productosDisponiblesBody').addEventListener('input', e => {
+    if(e.target.tagName === 'INPUT') {
+      const input = e.target;
+      const cantidad = parseFloat(input.value);
+      const producto = input.dataset.producto;
+      const precio = parseFloat(input.dataset.precio);
+      if(cantidad > 0) {
+        productosVenta[producto] = {cantidad, precioUnitario: precio};
+      } else {
+        delete productosVenta[producto];
+      }
+      actualizarTablaVenta();
+    }
+  });
+
+  function actualizarTablaVenta() {
+    const tbody = document.getElementById('productosVentaBody');
+    tbody.innerHTML = '';
+    let total = 0;
+    Object.entries(productosVenta).forEach(([prod, info]) => {
+      const subtotal = info.cantidad * info.precioUnitario;
+      total += subtotal;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${prod}</td>
+        <td>${info.cantidad}</td>
+        <td>$${info.precioUnitario.toFixed(2)}</td>
+        <td>$${subtotal.toFixed(2)}</td>
+        <td><button data-prod="${prod}" aria-label="Quitar ${prod}">X</button></td>
+      `;
+      tbody.appendChild(tr);
+    });
+    document.getElementById('totalVenta').textContent = '$' + total.toFixed(2);
+  }
+
+  // Quitar producto venta
+  document.getElementById('productosVentaBody').addEventListener('click', e => {
+    if(e.target.tagName === 'BUTTON') {
+      const prod = e.target.dataset.prod;
+      delete productosVenta[prod];
+      // También limpiar input en productos disponibles
+      const inputs = document.querySelectorAll(`#productosDisponiblesBody input[data-producto="${prod}"]`);
+      inputs.forEach(i => i.value = 0);
+      actualizarTablaVenta();
+    }
+  });
+
+  // Registrar venta
+  document.getElementById('ventaForm').onsubmit = async e => {
+    e.preventDefault();
+    if(Object.keys(productosVenta).length === 0) {
+      alert('Agrega al menos un producto para vender');
+      return;
+    }
+    const sucursal = document.getElementById('sucursalVenta').value;
+    if(!sucursal) {
+      alert('Selecciona sucursal');
+      return;
+    }
+    const cliente = document.getElementById('nombreCliente').value.trim();
+    const domicilio = document.getElementById('domicilioCliente').value.trim();
+
+    // Preparar lista productos para envío
+    const productosArray = Object.entries(productosVenta).map(([prod, info]) => ({
+      producto: prod,
+      cantidad: info.cantidad,
+      precioUnitario: info.precioUnitario
+    }));
+
+    const total = productosArray.reduce((acc, cur) => acc + cur.cantidad * cur.precioUnitario, 0);
+
+    try {
+      const res = await fetch(SCRIPT_URL + '?action=addVenta', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({
+          sucursal,
+          empleado: currentUser.nombre,
+          productos: productosArray,
+          cliente,
+          domicilio,
+          total
+        })
+      });
+      const data = await res.json();
+      if(data.success) {
+        alert('Venta registrada correctamente');
+        mostrarTicket({
+          sucursal,
+          empleado: currentUser.nombre,
+          productos: productosArray,
+          cliente,
+          domicilio,
+          total,
+          fecha: new Date().toLocaleString()
+        });
+        // Reset venta
+        productosVenta = {};
+        actualizarTablaVenta();
+        document.getElementById('ventaForm').reset();
+        document.getElementById('productosDisponiblesBody').innerHTML = '';
+      } else {
+        alert('Error al registrar venta');
+      }
+    } catch(err) {
+      alert('Error en conexión');
+      console.error(err);
+    }
+  };
+
+  // --- TICKET ---
+  const ticketSection = document.getElementById('ticketSection');
+  const ticketContent = document.getElementById('ticketContent');
+  const btnCerrarTicket = document.getElementById('btnCerrarTicket');
+  btnCerrarTicket.onclick = () => ticketSection.style.display = 'none';
+
+  function mostrarTicket(data) {
+    let html = `<h3>Ticket de Venta</h3>
+      <p><strong>Sucursal:</strong> ${data.sucursal}</p>
+      <p><strong>Empleado:</strong> ${data.empleado}</p>
+      <p><strong>Cliente:</strong> ${data.cliente || '-'}</p>
+      <p><strong>Domicilio:</strong> ${data.domicilio || '-'}</p>
+      <p><strong>Fecha:</strong> ${data.fecha}</p>
+      <table border="1" style="border-collapse: collapse; width: 100%;">
+        <thead><tr>
+          <th>Producto</th><th>Cantidad</th><th>Precio Unitario</th><th>Subtotal</th>
+        </tr></thead><tbody>`;
+
+    data.productos.forEach(p => {
+      const subtotal = p.cantidad * p.precioUnitario;
+      html += `<tr>
+        <td>${p.producto}</td>
+        <td>${p.cantidad}</td>
+        <td>$${p.precioUnitario.toFixed(2)}</td>
+        <td>$${subtotal.toFixed(2)}</td>
+      </tr>`;
+    });
+
+    html += `</tbody></table>
+      <p><strong>Total:</strong> $${data.total.toFixed(2)}</p>
+      <button id="btnCerrarTicketModal">Cerrar</button>`;
+
+    ticketContent.innerHTML = html;
+    ticketSection.style.display = 'block';
+
+    document.getElementById('btnCerrarTicketModal').onclick = () => {
+      ticketSection.style.display = 'none';
+    };
+  }
+
+  // Inicializar al cargar
+  if(currentUser.rol === 'admin') {
+    cargarAdmin();
+    showAdminSection(empleadosSection);
+  } else {
+    cargarEmpleado();
+    showSection(empleadoSection);
+  }
+
+})();
+</script>
+
+</body>
+</html>
